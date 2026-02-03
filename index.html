@@ -2,77 +2,50 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>見てる</title>
+  <title>見張られてる作業</title>
   <style>
     body {
-      background: #111;
-      color: #eee;
-      text-align: center;
-      font-family: sans-serif;
-      height: 100vh;
-      margin: 0;
+      background:#111;
+      color:#eee;
+      font-family:sans-serif;
+      text-align:center;
+      margin:0;
+      height:100vh;
     }
     .eye {
-      width: 80px;
-      height: 80px;
-      background: white;
-      border-radius: 50%;
-      display: inline-block;
-      margin: 40px;
-      position: relative;
+      width:80px;height:80px;background:#fff;border-radius:50%;
+      display:inline-block;margin:30px;position:relative;
     }
     .pupil {
-      width: 25px;
-      height: 25px;
-      background: black;
-      border-radius: 50%;
-      position: absolute;
-      top: 28px;
-      left: 28px;
+      width:25px;height:25px;background:#000;border-radius:50%;
+      position:absolute;top:28px;left:28px;
     }
-    #msg {
-      margin-top: 40px;
-      opacity: 0;
-      transition: 1s;
-    }
+    #timer { font-size:40px; margin:20px; }
+    #msg { opacity:.8; margin-top:20px; }
+    button { font-size:16px; padding:8px 16px; }
   </style>
 </head>
 <body>
 
-  <h1>……</h1>
+<h1>作業、してる？</h1>
 
-  <div class="eye"><div class="pupil"></div></div>
-  <div class="eye"><div class="pupil"></div></div>
+<div class="eye"><div class="pupil"></div></div>
+<div class="eye"><div class="pupil"></div></div>
 
-  <div id="msg">ずっと、みてるよ</div>
+<div id="timer">25:00</div>
+<button onclick="start()">作業開始</button>
 
-  <script>
-    const pupils = document.querySelectorAll(".pupil");
-    let timer;
+<div id="msg">見てるからね</div>
 
-    document.addEventListener("mousemove", (e) => {
-      const x = e.clientX;
-      const y = e.clientY;
+<script>
+const pupils = document.querySelectorAll(".pupil");
+let workTime = 25 * 60;
+let interval, lastMove = Date.now();
 
-      pupils.forEach(pupil => {
-        const rect = pupil.parentElement.getBoundingClientRect();
-        const dx = x - (rect.left + rect.width / 2);
-        const dy = y - (rect.top + rect.height / 2);
-        const angle = Math.atan2(dy, dx);
-        const r = 15;
-
-        pupil.style.left = 28 + Math.cos(angle) * r + "px";
-        pupil.style.top  = 28 + Math.sin(angle) * r + "px";
-      });
-
-      document.getElementById("msg").style.opacity = 0;
-      clearTimeout(timer);
-
-      timer = setTimeout(() => {
-        document.getElementById("msg").style.opacity = 1;
-      }, 2000);
-    });
-  </script>
-
-</body>
-</html>
+document.addEventListener("mousemove", e => {
+  lastMove = Date.now();
+  pupils.forEach(p => {
+    const r = p.parentElement.getBoundingClientRect();
+    const a = Math.atan2(
+      e.clientY - (r.top + r.height/2),
+      e.clientX - (r
