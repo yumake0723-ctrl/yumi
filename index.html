@@ -1,78 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>高知パーキング検索</title>
-<style>
-body { font-family: Arial; margin: 20px; }
-input { padding: 8px; width: 250px; }
-button { padding: 8px; }
-.result { margin-top: 20px; }
-</style>
+  <meta charset="UTF-8">
+  <title>高知県駐車場検索アプリ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    #map {
+      height: 500px;
+      width: 100%;
+      margin-top: 20px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 5px;
+      margin: 5px;
+    }
+  </style>
 </head>
 <body>
 
-<h2>高知県 パーキング検索</h2>
+  <h1>高知県 駐車場検索</h1>
+  <input type="text" id="location" placeholder="目的地を入力（例: 高知城）">
+  <button onclick="searchParking()">検索</button>
 
-<input id="lat" placeholder="緯度 (例: 33.5597)">
-<input id="lon" placeholder="経度 (例: 133.5311)">
-<button onclick="search()">検索</button>
+  <div id="map"></div>
 
-<div class="result" id="result"></div>
+  <!-- Google Maps JavaScript API (Places Libraryを含む) -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+  <script>
+    let map;
+    let service;
+    let infowindow;
 
-<script>
-// 高知市中心周辺の駐車場データ
-const parkings = [
- {name:"高知駅前パーキング", lat:33.5663, lon:133.5437},
- {name:"ひろめ市場駐車場", lat:33.5593, lon:133.5310},
- {name:"県庁前パーキング", lat:33.5589, lon:133.5318},
- {name:"帯屋町パーキング", lat:33.5605, lon:133.5324},
- {name:"はりまや橋パーキング", lat:33.5600, lon:133.5432}
-];
+    function initMap() {
+      // 高知県中央の座標
+      const kochiCenter = { lat: 33.5597, lng: 133.5311 };
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: kochiCenter,
+        zoom: 13,
+      });
+      infowindow = new google.maps.InfoWindow();
+    }
 
-// 距離計算（km）
-function distance(lat1, lon1, lat2, lon2) {
- const R = 6371;
- const dLat = (lat2-lat1) * Math.PI/180;
- const dLon = (lon2-lon1) * Math.PI/180;
- const a =
-   Math.sin(dLat/2) * Math.sin(dLat/2) +
-   Math.cos(lat1*Math.PI/180) *
-   Math.cos(lat2*Math.PI/180) *
-   Math.sin(dLon/2) *
-   Math.sin(dLon/2);
- const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
- return R * c;
-}
+    function searchParking() {
+      const location = document.getElementById("location").value;
+      const geocoder = new google.maps.Geocoder();
 
-function search(){
- const lat = parseFloat(document.getElementById("lat").value);
- const lon = parseFloat(document.getElementById("lon").value);
+      // 入力された目的地を座標に変換
+      geocoder.geocode({ address: location + ", 高知県" }, (results, status) => {
+        if (status === "OK") {
 
- if(isNaN(lat) || isNaN(lon)){
-   alert("緯度と経度を正しく入力してください");
-   return;
- }
-
- let results = parkings.map(p => {
-   return {
-     name: p.name,
-     dist: distance(lat, lon, p.lat, p.lon)
-   };
- });
-
- results.sort((a,b) => a.dist - b.dist);
-
- let html = "<h3>近い順</h3>";
- results.forEach(r => {
-   html += `${r.name} - ${r.dist.toFixed(2)} km<br>`;
- });
-
- document.getElementById("result").innerHTML = html;
-}
-</script>
-
-</body>
-</html>
-
-  
