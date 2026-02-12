@@ -14,7 +14,7 @@
       width: 100%;
       margin-top: 20px;
     }
-    input, button {
+    select, button {
       font-size: 16px;
       padding: 5px;
       margin: 5px;
@@ -24,7 +24,19 @@
 <body>
 
   <h1>高知県 駐車場検索</h1>
-  <input type="text" id="location" placeholder="目的地を入力（例: 高知城、高知市役所）">
+
+  <label for="city">市町村を選択:</label>
+  <select id="city">
+    <option value="">選択してください</option>
+    <option value="高知市">高知市</option>
+    <option value="南国市">南国市</option>
+    <option value="四万十市">四万十市</option>
+    <option value="香南市">香南市</option>
+    <option value="土佐市">土佐市</option>
+    <option value="須崎市">須崎市</option>
+    <!-- 他の市町村も追加可能 -->
+  </select>
+
   <button onclick="searchParking()">検索</button>
 
   <div id="map"></div>
@@ -41,20 +53,33 @@
       const kochiCenter = { lat: 33.5597, lng: 133.5311 };
       map = new google.maps.Map(document.getElementById("map"), {
         center: kochiCenter,
-        zoom: 12
+        zoom: 10
       });
       infowindow = new google.maps.InfoWindow();
     }
 
     function searchParking() {
-      const location = document.getElementById("location").value.trim();
-      if (!location) {
-        alert("目的地を入力してください。");
+      const city = document.getElementById("city").value;
+      if (!city) {
+        alert("市町村を選択してください。");
         return;
       }
 
       const geocoder = new google.maps.Geocoder();
 
-      // 地名から座標を取得
-      geocoder.geocode({ address: location + ", 高知県" }, (results, status) => {
-        if (status =
+      // 選択した市町村を地名検索
+      geocoder.geocode({ address: city + ", 高知県" }, (results, status) => {
+        if (status === "OK") {
+          const location = results[0].geometry.location;
+          map.setCenter(location);
+          map.setZoom(14);
+
+          // 駐車場検索
+          const request = {
+            location: location,
+            radius: 1500, // 半径1.5km
+            type: ['parking']
+          };
+
+          service = new google.maps.places.PlacesService(map);
+          service.nearbySea
