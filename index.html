@@ -1,25 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <title>マップテスト</title>
+  <meta charset="UTF-8">
+  <title>オリンピック会場ライブカメラ</title>
   <style>
-    #map { height: 500px; width: 100%; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    iframe {
+      width: 90%;
+      height: 500px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+    select, button {
+      font-size: 16px;
+      padding: 5px;
+      margin: 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>マップ表示テスト</h2>
-  <div id="map"></div>
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+  <h1>オリンピック会場 ライブカメラ</h1>
+
+  <select id="venue">
+    <option value="">ライブカメラを選択</option>
+    <option value="berlin_olymp">ベルリン オリンピアシュタディオン</option>
+    <option value="tokyo_bay">東京湾エリア ライブカメラ（湾岸景観）</option>
+    <!-- 追加のライブカメラがあればここに増やせます -->
+  </select>
+
+  <button onclick="showCamera()">表示</button>
+
+  <div id="cameraView"></div>
+
   <script>
-    function initMap() {
-      const center = { lat: 33.5597, lng: 133.5311 }; // 高知県中心
-      new google.maps.Map(document.getElementById("map"), {
-        zoom: 10,
-        center: center
-      });
+    function showCamera() {
+      const v = document.getElementById("venue").value;
+      const container = document.getElementById("cameraView");
+      container.innerHTML = ""; // リセット
+
+      let iframeSrc = "";
+      if (v === "berlin_olymp") {
+        iframeSrc = "https://webcamera24.com/ja/camera/germany/olympic-stadium-cam/"; 
+      } else if (v === "tokyo_bay") {
+        iframeSrc = "https://www.youtube.com/embed/huFSMdWCRnI"; 
+      }
+
+      if (iframeSrc) {
+        container.innerHTML = `<iframe src="${iframeSrc}" allowfullscreen></iframe>`;
+      } else {
+        container.innerHTML = "選択されたライブカメラはありません。";
+      }
     }
-    initMap();
   </script>
+
 </body>
 </html>
